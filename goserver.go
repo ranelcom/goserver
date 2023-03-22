@@ -77,7 +77,7 @@ func response(udpServer net.PacketConn, addr net.Addr, buf []byte) {
 		latitude, _ := nmea.ParseGPS(nmea_latitude)
 		nmea_longitude := cuttingByColon[4] + " " + cuttingByColon[5]
 		longitude, _ := nmea.ParseGPS(nmea_longitude)
-		json_body := `{"lat:"` + fmt.Sprintf("%f", latitude) + "," + `"lon:"` + fmt.Sprintf("%f", longitude) + `}`
+		json_body := `{"lat":` + fmt.Sprintf("%f", latitude) + "," + `"lon":` + fmt.Sprintf("%f", longitude) + `}`
 		rest.Post(json_body)
 		elapsed := time.Since(start)
 		log.Printf("Post took %s", elapsed)
