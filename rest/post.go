@@ -1,40 +1,36 @@
 package rest
 
 import (
-  "fmt"
-  "strings"
-  "net/http"
-  "io/ioutil"
+	"fmt"
+	"net/http"
+	"strings"
 )
 
-func Post(resource string, value string) {
+func Post(body string) {
 
-  url := "http://localhost:59986/api/v2/resource/GPS-POC/" + resource
-  method := "POST"
+	url := "http://localhost:59986/api/v2/resource/GPS-POC/json"
+	method := "POST"
 
-  payload := strings.NewReader(value)
+	payload := strings.NewReader(body)
+	req, err := http.NewRequest(method, url, payload)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	req.Header.Add("Content-Type", "application/json")
+	client := &http.Client{}
+	res, err := client.Do(req)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 
-  client := &http.Client {
-  }
-  req, err := http.NewRequest(method, url, payload)
+	defer res.Body.Close()
 
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  req.Header.Add("Content-Type", "text/plain")
-
-  res, err := client.Do(req)
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  defer res.Body.Close()
-
-  body, err := ioutil.ReadAll(res.Body)
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  fmt.Println(string(body))
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println("response Status:", res.Status)
+	fmt.Println(string(body))
 }

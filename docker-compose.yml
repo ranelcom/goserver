@@ -82,7 +82,7 @@ services:
       WRITABLE_PIPELINE_FUNCTIONS_MQTTEXPORT_PARAMETERS_CLIENTID: edgex
       WRITABLE_PIPELINE_FUNCTIONS_MQTTEXPORT_PARAMETERS_AUTHMODE: usernamepassword
     hostname: edgex-app-mqtt
-    image: edgexfoundry/app-service-configurable:2.0.0
+    image: edgexfoundry/app-service-configurable:2.1.1
     networks:
       edgex-network: {}
     ports:

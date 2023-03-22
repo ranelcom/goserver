@@ -33,6 +33,15 @@ func main() {
 }
 
 func response(udpServer net.PacketConn, addr net.Addr, buf []byte) {
+	type PostMasterPosa struct {
+		Lat    string `json:"lat"`
+		Lon    string `json:"lon"`
+		Height string `json:"height"`
+	}
+	type PostGGA struct {
+		Lat string `json:"lat"`
+		Lon string `json:"lon"`
+	}
 	time_stamp := time.Now().Format(time.ANSIC)
 	responseStr := fmt.Sprintf("%v", time_stamp)
 	sent := string(buf)
@@ -53,23 +62,24 @@ func response(udpServer net.PacketConn, addr net.Addr, buf []byte) {
 		lat := cuttingByColon[11]
 		lon := cuttingByColon[12]
 		height := cuttingByColon[13]
-		rest.Post("latitude", lat)
-		rest.Post("longitude", lon)
-		rest.Post("height", height)
+		//json_body := `{"lat:"` + lat + "," + `"lon:"` + lon + "," + `"height:"` + height + `}`
+		// JSON body
+		json_body := `{"lat":` + lat + "," + `"lon":` + lon + "," + `"height":` + height + `}`
+		rest.Post(json_body)
 		elapsed := time.Since(start)
 		log.Printf("Post took %s", elapsed)
 		responseStr = fmt.Sprintf("Message count: %v", messageCounter)
 	case "$GPGGA":
-                start := time.Now()
+		start := time.Now()
 		messageCounter++
 		fmt.Println("Message $GPGGA Message count:", messageCounter)
 		nmea_latitude := cuttingByColon[2] + " " + cuttingByColon[3]
 		latitude, _ := nmea.ParseGPS(nmea_latitude)
 		nmea_longitude := cuttingByColon[4] + " " + cuttingByColon[5]
 		longitude, _ := nmea.ParseGPS(nmea_longitude)
-                rest.Post("latitude", fmt.Sprintf("%f", latitude))
-		rest.Post("longitude", fmt.Sprintf("%f", longitude))
-                elapsed := time.Since(start)
+		json_body := `{"lat:"` + fmt.Sprintf("%f", latitude) + "," + `"lon:"` + fmt.Sprintf("%f", longitude) + `}`
+		rest.Post(json_body)
+		elapsed := time.Since(start)
 		log.Printf("Post took %s", elapsed)
 		responseStr = fmt.Sprintf("Message count: %v", messageCounter)
 
